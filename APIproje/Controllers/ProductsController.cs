@@ -1,4 +1,5 @@
-﻿using APIproje.Models;
+﻿using APIproje.Dto;
+using APIproje.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,9 @@ namespace APIproje.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
-            var products = await _context.Products.ToListAsync();
+            var products = await _context.Products.Where(x=> x.IsActive == true).Select(x=> ProductToDto(x)).ToListAsync();
+
+
             return Ok(products);
         }
 
@@ -30,7 +33,7 @@ namespace APIproje.Controllers
                 return NotFound();
             }
 
-            var p = await _context.Products.FirstOrDefaultAsync(x => x.ProductId == id);
+            var p = await _context.Products.Where(x=> x.IsActive == true && x.ProductId == id).Select(x => ProductToDto(x)).FirstOrDefaultAsync();
 
             if(p == null)
             {
@@ -113,5 +116,19 @@ namespace APIproje.Controllers
             return NoContent(); //Geriye değer döndürmez
 
         }
+    
+    
+        private static ProductDto ProductToDto(Product p)
+        {
+            return new ProductDto
+            {
+                ProductId = p.ProductId,
+                ProductName = p.ProductName,
+                Price = p.Price
+            };
+        }
+    
     }
+
+
 }
