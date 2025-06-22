@@ -49,5 +49,37 @@ namespace APIproje.Controllers
 
             return CreatedAtAction("GetProduct", new { id = entity.ProductId }, entity);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProduct(int id, Product entity)
+        {
+            if(id != entity.ProductId)
+            {
+                return BadRequest(); // hatalı işlem kodu
+            }
+            var product = await _context.Products.FirstOrDefaultAsync(x => x.ProductId == id);
+
+            if(product == null)
+            {
+                return NotFound();
+            }
+
+            product.ProductName = entity.ProductName;
+            product.Price = entity.Price;
+            product.IsActive = entity.IsActive;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception)
+            {
+
+                return NotFound();
+            }
+
+            return NoContent(); //Geriye değer döndürmez
+        }
     }
 }
