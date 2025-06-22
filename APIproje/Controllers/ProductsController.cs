@@ -1,11 +1,13 @@
 ﻿using APIproje.Dto;
 using APIproje.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace APIproje.Controllers
 {
+  
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
@@ -25,6 +27,7 @@ namespace APIproje.Controllers
             return Ok(products);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int? id)
         {
